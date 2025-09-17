@@ -10,7 +10,7 @@ export default (sequelize) => {
                 allowNull: false,
             },
             status: {
-                type: DataTypes.ENUM('booked', 'checked-in', 'check-out'),
+                type: DataTypes.ENUM('booked', 'checked-in', 'check-out', 'cancelled'),
                 allowNull: false,
             },
             bookingTime: {
