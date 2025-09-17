@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize";
-import database from "../config/database";
+import database from "../config/database.js";
 import user from './user.js';
 import parkingSlot from "./parkingSlot.js";
 import parkingRecord from "./parkingRecord.js";
