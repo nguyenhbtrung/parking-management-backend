@@ -1,4 +1,4 @@
-# Backend - Node.js (Express + Sequelize + PostgreSQL)
+# Parking Management Backend - Node.js (Express + Sequelize + PostgreSQL)
 
 ## 📌 Overview
 This is a backend API built with **Node.js + Express**, using **Sequelize ORM** with **PostgreSQL** as the database.  
