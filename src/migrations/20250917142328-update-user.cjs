@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return queryInterface.changeColumn('Users', 'phone', {
+    await queryInterface.changeColumn('Users', 'phone', {
       type: Sequelize.STRING(20),
       allowNull: true,
       unique: false,
@@ -11,16 +11,26 @@ module.exports = {
         is: /^[0-9+\-() ]*$/i,
       },
     });
+    await queryInterface.removeColumn('Users', 'password', {});
+    await queryInterface.changeColumn('Users', 'passwordHash', {
+      type: Sequelize.STRING(255),
+      allowNull: false,
+    });
   },
 
   async down(queryInterface, Sequelize) {
-    return queryInterface.changeColumn('Users', 'phone', {
+    await queryInterface.changeColumn('Users', 'phone', {
       type: Sequelize.STRING(20),
       allowNull: true,
       unique: true,
       validate: {
         is: /^[0-9+\-() ]*$/i,
       },
+    });
+    await queryInterface.removeColumn('Users', 'passwordHash', {});
+    await queryInterface.changeColumn('Users', 'password', {
+      type: Sequelize.STRING(255),
+      allowNull: false,
     });
   }
 };

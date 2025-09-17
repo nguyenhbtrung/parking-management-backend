@@ -10,7 +10,7 @@ export default (sequelize) => {
                 allowNull: false,
                 unique: true,
             },
-            password: {
+            passwordHash: {
                 type: DataTypes.STRING(255),
                 allowNull: false,
             },
@@ -29,7 +29,7 @@ export default (sequelize) => {
             phone: {
                 type: DataTypes.STRING(20),
                 allowNull: true,
-                unique: true,
+                unique: false,
                 validate: {
                     is: /^[0-9+\-() ]*$/i,
                 },
