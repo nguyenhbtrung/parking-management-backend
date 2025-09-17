@@ -25,9 +25,10 @@ The system supports authentication with **JWT**, environment configuration with 
 │   ├── migrations/    # Sequelize migrations
 │   ├── routes/        # API routes
 │   ├── controllers/   # Request handlers
+|   ├── services/      # Services
 │   ├── middlewares/   # Middlewares
 │   ├── config/        # Sequelize config
-│   └── index.js         # Express entry point
+│   └── index.js       # Express entry point
 ├── .env               # Environment variables
 ├── package.json
 └── README.md
