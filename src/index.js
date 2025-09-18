@@ -5,26 +5,27 @@ import express, { json } from "express";
 import { sequelize } from "./models/index.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import authRoutes from "./routes/auth.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 const app = express();
 
 app.use(json());
 
-app.use('/api/auth', authRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
 app.use(errorHandler);
-
 
 const PORT = process.env.PORT || 8080;
 
 (async () => {
-    try {
-        await sequelize.authenticate();
-        console.log('✅ Database connected');
-        app.listen(PORT, () => {
-            console.log(`🚀 Express running on http://localhost:${PORT}`);
-        });
-    } catch (err) {
-        console.error('❌ Failed to start:', err);
-    }
+  try {
+    await sequelize.authenticate();
+    console.log("✅ Database connected");
+    app.listen(PORT, () => {
+      console.log(`🚀 Express running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ Failed to start:", err);
+  }
 })();
