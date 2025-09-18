@@ -4,10 +4,13 @@ dotenv.config();
 import express, { json } from "express";
 import { sequelize } from "./models/index.js";
 import errorHandler from "./middlewares/errorHandler.js";
+import authRoutes from "./routes/auth.routes.js";
 
 const app = express();
 
 app.use(json());
+
+app.use('/api/auth', authRoutes);
 
 app.use(errorHandler);
 
