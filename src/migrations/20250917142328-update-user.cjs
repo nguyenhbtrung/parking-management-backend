@@ -12,9 +12,13 @@ module.exports = {
       },
     });
     await queryInterface.removeColumn('Users', 'password', {});
-    await queryInterface.changeColumn('Users', 'passwordHash', {
+    await queryInterface.addColumn('Users', 'passwordHash', {
       type: Sequelize.STRING(255),
       allowNull: false,
+    });
+    await queryInterface.changeColumn('Users', 'name', {
+      type: Sequelize.STRING(255),
+      allowNull: true,
     });
   },
 
@@ -28,7 +32,11 @@ module.exports = {
       },
     });
     await queryInterface.removeColumn('Users', 'passwordHash', {});
-    await queryInterface.changeColumn('Users', 'password', {
+    await queryInterface.addColumn('Users', 'password', {
+      type: Sequelize.STRING(255),
+      allowNull: false,
+    });
+    await queryInterface.changeColumn('Users', 'name', {
       type: Sequelize.STRING(255),
       allowNull: false,
     });
