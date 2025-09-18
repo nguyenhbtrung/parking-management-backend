@@ -56,3 +56,18 @@ export const getBookingsAsync = async (userId) => {
   });
   return bookings;
 };
+
+export const cancelBookingAsync = async (userId) => {
+  const booking = await ParkingRecord.findOne({
+    where: {
+      userId,
+      status: "booked",
+    },
+  });
+  if (!booking) {
+    throw new AppError("NO_ACTIVE_BOOKING", 404);
+  }
+  booking.status = "cancelled";
+  await booking.save();
+  return booking;
+};
