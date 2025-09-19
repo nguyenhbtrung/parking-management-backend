@@ -9,6 +9,11 @@ export default (sequelize) => {
                 type: DataTypes.STRING(20),
                 allowNull: true,
             },
+            status: {
+                type: DataTypes.ENUM('available', 'booked', 'occupied'),
+                allowNull: false,
+                defaultValue: 'available'
+            },
         },
         {
             sequelize,
