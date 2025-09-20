@@ -1,4 +1,4 @@
-import { ParkingRecord, User } from "../models/index.js";
+import { ParkingRecord, User, ParkingSlot } from "../models/index.js";
 import { AppError } from "../errors/appError.js";
 import { Op } from "sequelize";
 
@@ -70,4 +70,11 @@ export const cancelBookingAsync = async (userId) => {
   booking.status = "cancelled";
   await booking.save();
   return booking;
+};
+
+export const getSlotInfoAsync = async () => {
+  const slots = await ParkingSlot.findAll({
+    attributes: ["id", "status"], // chỉ lấy id và status
+  });
+  return slots;
 };
