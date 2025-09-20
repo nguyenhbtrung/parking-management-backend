@@ -34,7 +34,8 @@ export const registerAsync = async ({ username, password, email, phone }) => {
         username: newUser.username,
         name: newUser.name,
         email: newUser.email,
-        phone: newUser.phone
+        phone: newUser.phone,
+        role: newUser.role,
     };
     const token = generateToken(user);
     return { user, token };
@@ -54,7 +55,8 @@ export const loginAsync = async ({ username, password }) => {
         username: existingUser.username,
         name: existingUser.name,
         email: existingUser.email,
-        phone: existingUser.phone
+        phone: existingUser.phone,
+        role: existingUser.role,
     };
     const token = generateToken(user);
     return { user, token };
