@@ -27,3 +27,16 @@ export const requireAuth = (req, res, next) => {
         });
     }
 };
+
+export const requireAdmin = (req, res, next) => {
+    if (req.user?.role !== "admin") {
+        return res.status(403).json({
+            error: {
+                code: "FORBIDDEN",
+                message: "You do not have permission to access this resource"
+            }
+        });
+    }
+    next();
+};
+
