@@ -12,11 +12,7 @@ export const getUserProfileAsync = async (userId) => {
   return user;
 };
 
-export const bookingAsync = async ({
-  bookingTime,
-  parkingSlotId,
-  userId,
-}) => {
+export const bookingAsync = async ({ bookingTime, parkingSlotId, userId }) => {
   const existingBooking = await ParkingRecord.findOne({
     where: {
       [Op.or]: [
@@ -44,6 +40,9 @@ export const bookingAsync = async ({
     userId,
     status: "booked",
   });
+  const slot = await ParkingSlot.findByPk(parkingSlotId);
+  slot.status = "booked";
+  await slot.save();
   return newBooking;
 };
 
@@ -66,6 +65,9 @@ export const cancelBookingAsync = async (userId) => {
     throw new AppError("NO_ACTIVE_BOOKING", 404);
   }
   booking.status = "cancelled";
+  const slot = await ParkingSlot.findByPk(booking.parkingSlotId);
+  slot.status = "available";
+  await slot.save();
   await booking.save();
   return booking;
 };
