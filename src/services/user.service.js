@@ -13,7 +13,6 @@ export const getUserProfileAsync = async (userId) => {
 };
 
 export const bookingAsync = async ({
-  licensePlate,
   bookingTime,
   parkingSlotId,
   userId,
@@ -40,7 +39,6 @@ export const bookingAsync = async ({
     throw new AppError("ALREADY_BOOKED", 400);
   }
   const newBooking = await ParkingRecord.create({
-    licensePlate,
     bookingTime,
     parkingSlotId,
     userId,

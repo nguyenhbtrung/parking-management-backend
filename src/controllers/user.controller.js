@@ -13,10 +13,9 @@ export const getUserProfile = async (req, res, next) => {
 };
 
 export const booking = async (req, res, next) => {
-  const { licensePlate, bookingTime, parkingSlotId } = req.body;
+  const { bookingTime, parkingSlotId } = req.body;
   const userId = req.user.id;
   const data = await bookingAsync({
-    licensePlate,
     bookingTime,
     parkingSlotId,
     userId,
