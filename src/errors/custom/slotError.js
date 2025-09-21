@@ -19,3 +19,13 @@ export class SlotOccupiedError extends AppError {
         );
     }
 }
+
+export class SlotNotCheckedIn extends AppError {
+    constructor(message = "Slot is not checked in.") {
+        super(
+            message,
+            "SLOT_NOT_CHECKED_IN",
+            400,
+        );
+    }
+}
