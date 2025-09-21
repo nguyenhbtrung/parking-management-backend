@@ -29,3 +29,13 @@ export class SlotNotCheckedIn extends AppError {
         );
     }
 }
+
+export class SlotNotBooked extends AppError {
+    constructor(message = "Slot is not booked.") {
+        super(
+            message,
+            "SLOT_NOT_BOOKED",
+            400,
+        );
+    }
+}

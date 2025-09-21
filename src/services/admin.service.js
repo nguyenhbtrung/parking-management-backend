@@ -1,5 +1,5 @@
 import { AppError } from "../errors/appError.js";
-import { SlotNotCheckedIn, SlotNotExistError, SlotOccupiedError } from "../errors/index.js";
+import { SlotNotBooked, SlotNotCheckedIn, SlotNotExistError, SlotOccupiedError } from "../errors/index.js";
 import { ParkingRecord, ParkingSlot, sequelize } from "../models/index.js";
 
 export const getParkingSlotsAsync = async () => {
@@ -82,6 +82,40 @@ export const checkOutAsync = async ({ slotId }) => {
             where: {
                 parkingSlotId: slotId,
                 status: "checked-in",
+            },
+            transaction: t
+        });
+
+        await t.commit();
+
+        return slot;
+    } catch (error) {
+        await t.rollback();
+        throw error;
+    }
+};
+
+export const cancelBookingSlotAsync = async ({ slotId }) => {
+    const slot = await ParkingSlot.findByPk(slotId);
+    if (!slot)
+        throw new SlotNotExistError();
+
+    if (slot.status !== "booked")
+        throw new SlotNotBooked();
+
+    const t = await sequelize.transaction();
+
+    try {
+        slot.status = "available";
+        slot.licensePlate = null;
+        await slot.save({ transaction: t });
+
+        await ParkingRecord.update({
+            status: "cancelled",
+        }, {
+            where: {
+                parkingSlotId: slotId,
+                status: "booked",
             },
             transaction: t
         });
