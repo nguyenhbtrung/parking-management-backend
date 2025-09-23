@@ -1,7 +1,8 @@
 import { Op } from "sequelize";
 import { AppError } from "../errors/appError.js";
-import { SlotNotBooked, SlotNotCheckedIn, SlotNotExistError, SlotOccupiedError } from "../errors/index.js";
+import { SlotNotBooked, SlotNotCheckedIn, SlotNotExistError, SlotOccupiedError, UserNotFoundError } from "../errors/index.js";
 import { ParkingRecord, ParkingSlot, sequelize, User } from "../models/index.js";
+import { hash } from "bcryptjs";
 
 export const getParkingSlotsAsync = async () => {
     const parkingSlot = await ParkingSlot.findAll();
@@ -184,4 +185,146 @@ export const getParkingRecordsAsync = async ({
             totalPages: Math.ceil(count / limit),
         }
     };
+};
+
+export const getUserAsync = async ({
+    page = 1,
+    limit = 10,
+    username,
+    name,
+    email,
+    phone,
+    role,
+    sortBy = "createdAt",
+    sortOrder = "DESC"
+}) => {
+    const offset = (page - 1) * limit;
+
+    const where = {};
+
+    if (username) {
+        where.username = { [Op.like]: `%${username}%` };
+    }
+
+    if (name) {
+        where.name = { [Op.like]: `%${name}%` };
+    }
+
+    if (email) {
+        where.email = { [Op.like]: `%${email}%` };
+    }
+
+    if (phone) {
+        where.phone = { [Op.like]: `%${phone}%` };
+    }
+
+    if (role) {
+        where.role = role;
+    }
+
+    const { rows, count } = await User.findAndCountAll({
+        attributes: ["id", "username", "name", "email", "phone", "role"],
+        where,
+        offset,
+        limit,
+        order: [[sortBy, sortOrder]],
+    });
+
+    return {
+        data: rows,
+        pagination: {
+            total: count,
+            page: Number(page),
+            limit: Number(limit),
+            totalPages: Math.ceil(count / limit),
+        }
+    };
+};
+
+export const creatUserAsync = async ({ username, password, name, email, phone, role }) => {
+    const existingUser = await User.findOne({
+        where: {
+            [Op.or]: [{ email }, { username }]
+        }
+    });
+
+    if (existingUser) {
+        const duplicatedField = existingUser.username === username ? 'username' : 'email';
+        throw new AppError(
+            `${duplicatedField} already exists`,
+            duplicatedField === 'email' ? 'DUPLICATE_EMAIL' : 'DUPLICATE_USERNAME',
+            409,
+            { [duplicatedField]: `${duplicatedField} already exists` }
+        );
+    }
+
+    const passwordHash = await hash(password, 10);
+    const newUser = await User.create({
+        username,
+        passwordHash,
+        email,
+        name,
+        phone,
+        role
+    });
+    const user = {
+        id: newUser.id,
+        username: newUser.username,
+        name: newUser.name,
+        email: newUser.email,
+        phone: newUser.phone,
+        role: newUser.role,
+    };
+    return user;
+};
+
+export const updateUserAsync = async ({ id, username, password, name, email, phone, role }) => {
+    const user = await User.findByPk(id);
+    if (!user) {
+        throw new UserNotFoundError();
+    }
+
+    if (username) {
+        user.username = username;
+    }
+
+    if (password) {
+        const passwordHash = await hash(password, 10);
+        user.passwordHash = passwordHash;
+    }
+
+    if (name) {
+        user.name = name;
+    }
+
+    if (email) {
+        user.email = email;
+    }
+
+    if (phone) {
+        user.phone = phone;
+    }
+
+    if (role) {
+        user.role = role;
+    }
+
+    await user.save();
+
+    return {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+    };
+};
+
+export const deleteUserAsync = async ({ id }) => {
+    await User.destroy({
+        where: {
+            id
+        },
+    });
 };
