@@ -1,4 +1,4 @@
-import { cancelBookingSlotAsync, checkInAsync, checkOutAsync, getParkingSlotsAsync } from "../services/admin.service.js";
+import { cancelBookingSlotAsync, checkInAsync, checkOutAsync, getParkingRecordsAsync, getParkingSlotsAsync } from "../services/admin.service.js";
 
 export const getParkingSlots = async (req, res, next) => {
     const data = await getParkingSlotsAsync();
@@ -26,4 +26,14 @@ export const cancelBookingSlot = async (req, res, next) => {
 
     const data = await cancelBookingSlotAsync({ slotId });
     res.status(200).json({ data });
+};
+
+export const getParkingRecords = async (req, res) => {
+    const { page, limit, search, parkingRecordId, status, userId, parkingSlotId, sortBy, sortOrder } = req.query;
+
+    const result = await getParkingRecordsAsync({ page, limit, search, parkingRecordId, status, userId, parkingSlotId, sortBy, sortOrder });
+
+    return res.status(200).json({
+        ...result
+    });
 };

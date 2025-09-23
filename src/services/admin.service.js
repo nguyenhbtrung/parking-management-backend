@@ -1,6 +1,7 @@
+import { Op } from "sequelize";
 import { AppError } from "../errors/appError.js";
 import { SlotNotBooked, SlotNotCheckedIn, SlotNotExistError, SlotOccupiedError } from "../errors/index.js";
-import { ParkingRecord, ParkingSlot, sequelize } from "../models/index.js";
+import { ParkingRecord, ParkingSlot, sequelize, User } from "../models/index.js";
 
 export const getParkingSlotsAsync = async () => {
     const parkingSlot = await ParkingSlot.findAll();
@@ -127,4 +128,60 @@ export const cancelBookingSlotAsync = async ({ slotId }) => {
         await t.rollback();
         throw error;
     }
+};
+
+export const getParkingRecordsAsync = async ({
+    page = 1,
+    limit = 10,
+    search = "",
+    parkingRecordId,
+    status,
+    userId,
+    parkingSlotId,
+    sortBy = "createdAt",
+    sortOrder = "DESC"
+}) => {
+    const offset = (page - 1) * limit;
+
+    const where = {};
+
+    if (search) {
+        where.licensePlate = { [Op.like]: `%${search}%` };
+    }
+
+    if (parkingRecordId) {
+        where.id = parkingRecordId;
+    }
+
+    if (status) {
+        where.status = status;
+    }
+
+    if (userId) {
+        where.userId = userId;
+    }
+
+    if (parkingSlotId) {
+        where.parkingSlotId = parkingSlotId;
+    }
+
+    const { rows, count } = await ParkingRecord.findAndCountAll({
+        where,
+        offset,
+        limit,
+        order: [[sortBy, sortOrder]],
+        include: [
+            { model: User, as: "user", attributes: ["id", "username", "name", "phone", "email"] },
+        ]
+    });
+
+    return {
+        data: rows,
+        pagination: {
+            total: count,
+            page: Number(page),
+            limit: Number(limit),
+            totalPages: Math.ceil(count / limit),
+        }
+    };
 };

@@ -18,10 +18,10 @@ const User = user(sequelize);
 const ParkingSlot = parkingSlot(sequelize);
 const ParkingRecord = parkingRecord(sequelize);
 
-User.hasMany(ParkingRecord, { foreignKey: "userId" });
-ParkingRecord.belongsTo(User, { foreignKey: "userId" });
+User.hasMany(ParkingRecord, { foreignKey: "userId", as: "parkingRecords" });
+ParkingRecord.belongsTo(User, { foreignKey: "userId", as: "user" });
 
-ParkingSlot.hasMany(ParkingRecord, { foreignKey: "parkingSlotId" });
-ParkingRecord.belongsTo(ParkingSlot, { foreignKey: "parkingSlotId" });
+ParkingSlot.hasMany(ParkingRecord, { foreignKey: "parkingSlotId", as: "parkingRecords" });
+ParkingRecord.belongsTo(ParkingSlot, { foreignKey: "parkingSlotId", as: "parkingSlot" });
 
 export { sequelize, Sequelize, User, ParkingSlot, ParkingRecord };
